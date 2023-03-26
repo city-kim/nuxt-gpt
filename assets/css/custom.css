@@ -1,0 +1,28 @@
+@layer components {
+  .loader {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ddd;
+    box-shadow: 32px 0 #ddd, 64px 0 #ddd;
+    position: relative;
+    text-indent: -9999px;
+    animation: flash 0.5s ease-out infinite alternate;
+  }
+  
+  @keyframes flash {
+    0% {
+      background-color: #aaa;
+      box-shadow: 32px 0 #aaa, 64px 0 #ddd;
+    }
+    50% {
+      background-color: #ddd;
+      box-shadow: 32px 0 #aaa, 64px 0 #aaa;
+    }
+    100% {
+      background-color: #aaa;
+      box-shadow: 32px 0 #ddd, 64px 0 #aaa;
+    }
+  }
+}

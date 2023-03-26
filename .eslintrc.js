@@ -14,8 +14,7 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint"],
   rules: {
     'vue/multi-word-component-names': 0,
   },
-};
+}

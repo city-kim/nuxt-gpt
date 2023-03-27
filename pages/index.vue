@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { ChatList } from '@/types/openai'
 import User from '@/components/svg/user.vue'
 import Assistant from '@/components/svg/assistant.vue'
 import Letter from '@/components/svg/letter.vue'
+import Trash from '@/components/svg/trash.vue'
+import type { ChatData } from '@/types/openai'
 
-const conversation = ref<Array<ChatList>>([]) // 대화를 담을 배열
+const conversation = ref<Array<ChatData>>([]) // 대화를 담을 배열
 
 const contentList = ref<HTMLUListElement | null>(null) // ul element
 const loading = ref<boolean>(false) // 로딩 상태
@@ -33,13 +34,20 @@ async function quest () {
       contentList.value?.scrollTo(0, contentList.value.scrollHeight)
     }
   }, 500) // 추가되는 시점을 보정하기위해 0.5초 지연
+  
   const data = await $fetch('/api/browser', {
     method: 'POST',
-    body: { prompt: string }
+    body: {
+      prompt: string
+    }
   }).catch((err) => {
     // 실패시
-    alert('실패!')
-    console.log(err)
+    alert('이미 질문이 진행중입니다!')
+    if (err.data.statusMessage == 'proceeding') {
+      // 진행중인경우 마지막 내용을 삭제함
+      conversation.value.splice(-1)
+      prompt.value = err.data.message
+    }
   })
   
   loading.value = false // 로딩종료
@@ -63,6 +71,13 @@ function enterSubmit (e: KeyboardEvent) {
       // 질문이 있는경우에만 전송
       quest()
     }
+  }
+}
+
+function clearCookie () {
+  if (confirm('대화를 초기화하시겠습니까?')) {
+    const id = useCookie('browser_id')
+    id.value = null
   }
 }
 
@@ -119,13 +134,21 @@ function enterSubmit (e: KeyboardEvent) {
           :style="{height: height}"
           placeholder="무엇이든 질문하세요!"
           @keydown.enter="enterSubmit($event)"
-        >prompt</textarea>
+        >
+        </textarea>
         <button
-          class="px-3 py-2 hover:bg-gray-100 rounded absolute top-1/2 transform -translate-y-1/2 right-3"
+          class="px-3 py-2 hover:bg-gray-100 rounded absolute top-1/2 transform -translate-y-1/2 right-12"
           type="button"
           @click="quest"
         >
           <Letter class="w-4 h-4 fill-gray-500" />
+        </button>
+        <button
+          class="px-3 py-2 hover:bg-red-100 rounded absolute top-1/2 transform -translate-y-1/2 right-3"
+          type="button"
+          @click="clearCookie()"
+        >
+          <Trash class="w-4 h-4 fill-red-500" />
         </button>
       </div>
     </div>

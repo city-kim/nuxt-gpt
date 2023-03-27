@@ -11,6 +11,6 @@ export default defineEventHandler(async (event) => {
     // 채널은 채널id
     channel = body.channel_id
   }
-  chat([{role: 'user', content: body.text}], channel)
-  return '정상적으로 수신하였습니다.'
+  chat({role: 'user', content: body.text}, {type: 'slack', id: channel})
+  return '질문을 받았습니다!'
 })

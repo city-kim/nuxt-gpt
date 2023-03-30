@@ -4,9 +4,7 @@ export default defineEventHandler(async (event) => {
   console.log('event 수신')
   const body = await readBody(event)
   const quest = body.event.text as string // 질문
-
-  console.log(body)
-  if (!body.event.bot_profile) {
+  if (!body.event.bot_profile && quest) {
     // 봇 메시지가 아닌경우만 답변함
     chat({role: 'user', content: quest}, {type: 'slack', id: body.event.channel})
   }

@@ -6,6 +6,7 @@ interface ChatData {
 interface ChatType {
   type: 'slack'|'browser'
   id: string
+  remove?: boolean
 }
 
 export type {

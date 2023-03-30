@@ -42,9 +42,10 @@ async function quest () {
     }
   }).catch((err) => {
     // 실패시
-    alert('이미 질문이 진행중입니다!')
+    console.log(err)
     if (err.data.statusMessage == 'proceeding') {
       // 진행중인경우 마지막 내용을 삭제함
+      alert('이미 질문이 진행중입니다!')
       conversation.value.splice(-1)
       prompt.value = err.data.message
     }
@@ -74,12 +75,21 @@ function enterSubmit (e: KeyboardEvent) {
   }
 }
 
-function clearCookie () {
+async function clearCookie () {
   if (confirm('대화를 초기화하시겠습니까?')) {
-    const id = useCookie('browser_id')
-    id.value = null
+    // 대화삭제한다
+    await $fetch('/api/remove')
+    conversation.value = []
   }
 }
+
+onMounted(async () => {
+  // 마운트시 리스트가 있다면 가져오기
+  const result = await $fetch('/api/list')
+  if (result) {
+    conversation.value = result.data
+  }
+})
 
 </script>
 <template>

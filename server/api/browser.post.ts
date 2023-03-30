@@ -13,13 +13,12 @@ export default defineEventHandler(async (event) => {
 
 
   if (body.prompt) {
-    // result값이 들어갔을때 배열에 저장
     console.log('질문내용 : ' + body.prompt)
-
     // 질문던지기
     const quest = await chat({role: 'user', content: body.prompt}, {type: 'browser', id: id})
     .catch((err) => {
-      throw createError({ statusCode: 500, statusMessage: 'proceeding', message: err.message })
+      console.log(err)
+      throw createError({ statusCode: 500, statusMessage: err.cause, message: err.message })
     })
     if (quest) {
       // 답변이 정상적으로 왔다면 리턴
